@@ -19,7 +19,7 @@ All commands, alphabetic order; letter R
   `\\refstepcounter <#cmd-refstepcounter>`__, `\\relax <#cmd-relax>`__,
   `\\relpenalty <#cmd-relpenalty>`__,
   `\\@removeelement <#cmd-removeelement>`__,
-  `\\remove <#cmd-removelastskip>`__,
+  `\\removelastskip <#cmd-removelastskip>`__,
   `\\renewcommand <#cmd-renewcommand>`__,
   `\\renewenvironment <#cmd-renewenvironment>`__,
   `\\repeat <#cmd-repeat>`__,

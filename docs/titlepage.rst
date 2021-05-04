@@ -244,7 +244,7 @@ that follow.
    found according to rules 4 and 5, then the default configuration file
    will be used.
 -  In the case of rules 3 and 5, a tcf file is looked at, say
-   ``foo.tcf``. It is first searched in the current directoty, then in
+   ``foo.tcf``. It is first searched in the current directory, then in
    all directories specified by the ``confdir`` options, then in a
    default directory. For instance, if you say
    ``tralics -confdir=mydir/`` (final slash optional), the second try
@@ -379,7 +379,7 @@ and some isolated commands (in this example there is only line
 lines `29 <titlepage-conf.html#l29>`__ --
 `43 <titlepage-conf.html#l43>`__ are considered).
 
-From now one, all line numbers refer to the ``tpa.tcf`` file; the first
+From now on, all line numbers refer to the ``tpa.tcf`` file; the first
 block is at lines
 `311 <titlepage-conf.html#l311>`__--`347 <titlepage-conf.html#l347>`__,
 the second at lines
@@ -613,7 +613,7 @@ CE
    the attributes of ``<elt>``. In the example, we would get:
    ``<sURsop fr='dans le sud'/>``.
 CEE
-   The syntax is ``\cmdg ?+ <elt> <eltx>``. Same as above, but the
+   The syntax is ``\cmdg ? <elt> <eltx>``. Same as above, but the
    element created is ``<eltx>`` instead of one named ``cmdf`` with the
    attributes of ``<elt>``. Example
    ``\sParis ?<sUR> <Rocq en='nearparis'>`` gives

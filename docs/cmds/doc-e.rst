@@ -1043,7 +1043,7 @@ This is the translation.
        </math>
       </formula>
 
-Here is the content of the transcriot file. Note: in a previous version,
+Here is the content of the transcript file. Note: in a previous version,
 *Tralics* incorrectly inserted the value of everyvbox in the hbox of the
 math formula.
 

@@ -438,6 +438,7 @@ Translation
       <subelt2 sb2-att='value1'>
       texte2
       </subelt2>
+      </foo>
 
 If you try to specify twice the value of the same attribute, there are
 two cases: if the command is followed by a star, the old value is
@@ -528,7 +529,7 @@ XML tree <#manipulate>`__ for examples.
 \\XML@get, \\XML@set, \\XML@delete, \\XML@insert (Tralics command)
 ------------------------------------------------------------------
 
-These for command read an integer, say *N*. The first command puts in
+These four commands read an integer, say *N*. The first command puts in
 xmlB the child of index *N* of xmlA. The second command replaces the
 child of index *N* of xmlA by xmlB, the third command erases it; the
 last inserts xmlB before the child of index *N* of xmlA. These command
@@ -856,13 +857,13 @@ Manipulation of the XML tree
 the XML tree it constructs. In order to make sure that the result
 remains a tree, a complete copy of some objects has to be made; the
 copies may be avoided by using one of the two pointers xmlA and xmlB.
-One can get the name of a an element; however ``\XMLname \hbox{...}`` is
+One can get the name of an element; however ``\XMLname \hbox{...}`` is
 difficult to implement and a bit strange: this creates a box, gets its
 name, then discards the box (but the box is never destroyed). For this
 reason, you can fetch only the name of a box register or one of xmlA or
 xmlB.
 
-You can say ``\XML@moveAB``, ``\XML@moveBA`` and ``XML@swapAB``. The
+You can say ``\XML@moveAB``, ``\XML@moveBA`` and ``\XML@swapAB``. The
 effect is to copy xmlA into xmlB, or xmlB into xmlA or to swap these two
 quantities. You can say ``\XML@copyA`` or ``\XML@copyB``. What you get
 is a complete copy of xmlA or xmlB; you can put it in a register as
@@ -878,7 +879,7 @@ xmlA is not an element.
 You can say ``\XML@fetch``; this reads an integer N and puts in xmlA the
 XML element whose *ID* is N. If no element is found, a void element is
 used (you can use ``\XML@A@id`` to check the result). You can say
-``XML@parent``. This puts in xmlB an element whose child is xmlA, if
+``\XML@parent``. This puts in xmlB an element whose child is xmlA, if
 such an object exists; an empty box otherwise. You can say
 ``\XML@insert``, ``\XML@delete``, ``\XML@set`` or ``\XML@get``. These
 commands read an integer N. In the case of "get", the N-th child of xmlA

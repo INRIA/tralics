@@ -944,7 +944,7 @@ string that is used for the Raweb (`year' is the default, but it can be
 \`foot' or \`refer'). The last argument is a string (*Tralics* uses the
 bibtex type of the entry). After this fifth argument, there can be an
 optional argument that is ignored. The translation of ``\citation`` is a
-``<cit>`` element with all the arguments as attributes. Here is the
+``<citation>`` element with all the arguments as attributes. Here is the
 translation of the previous entry.
 
 .. container:: xml_out

@@ -487,7 +487,7 @@ file, everything will be OK; however, if the code follows
 command. The following command is not in outer vertical mode:
 \\usepackage*. Note also that the line without a number should not be
 put in the file, but given as answer to ``\read``. If nevertheless it is
-in the file, then line you type will executed. in particular, you get an
+in the file, then line you type will be executed. in particular, you get an
 endless loop if the answer contains ``\foo``.
 
 .. container:: ltx-source

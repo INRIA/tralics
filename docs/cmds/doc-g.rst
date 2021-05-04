@@ -41,7 +41,7 @@ All commands, alphabetic order; letter G
 \\g@addto@macro
 ---------------
 
-If you say ``\g@addt@macro\foo{bar}``, this will have as effect to
+If you say ``\g@addto@macro\foo{bar}``, this will have as effect to
 globally change the macro ``\foo``, by appending to its right the tokens
 ``bar``. This is similar to ``\addto@hook``, but is more widely used
 because there is only a small number of token list registers. See also

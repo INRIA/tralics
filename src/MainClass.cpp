@@ -862,7 +862,7 @@ void MainClass::read_config_and_other() {
 
 void MainClass::see_name(std::filesystem::path s) {
     if (!infile.empty()) {
-        spdlog::critical("Fatal error: seen two soure files, {} and {}", infile, s);
+        spdlog::critical("Fatal error: seen two source files, {} and {}", infile, s);
         exit(1);
     }
     s.replace_extension(".tex");
