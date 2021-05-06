@@ -20,15 +20,14 @@ public:
     [[nodiscard]] auto get_cell_span() const -> long;
     [[nodiscard]] auto has_name(const std::string &s) const -> bool { return name == s; }
     [[nodiscard]] auto has_name_of(const std::string &s) const -> bool { return name == the_names[s]; }
-    [[nodiscard]] auto is_anchor() const -> bool { return !is_xmlc() && name == the_names["anchor"]; }
+    [[nodiscard]] auto is_anchor() const -> bool { return is_element() && name == the_names["anchor"]; }
+    [[nodiscard]] auto is_element() const -> bool { return to_signed(id.value) > 0; }
     [[nodiscard]] auto is_whitespace() const -> bool;
     [[nodiscard]] auto is_empty_p() const -> bool;
-    [[nodiscard]] auto is_xmlc() const -> bool { return id.value == 0; }
     [[nodiscard]] auto last_addr() const -> Xml *;
     [[nodiscard]] auto last_is_string() const -> bool;
     [[nodiscard]] auto only_hi() const -> bool;
     [[nodiscard]] auto only_recur_hi() const -> bool;
-    [[nodiscard]] auto all_xmlc() const -> bool;
     [[nodiscard]] auto real_size() const -> long;
     [[nodiscard]] auto single_non_empty() const -> Xml *;
     [[nodiscard]] auto single_son() const -> Xml *;
@@ -45,7 +44,7 @@ public:
     void add_ref(std::string s);
     void add_tmp(gsl::not_null<Xml *> x);
     void add_last_nl(Xml *x);
-    void add_last_string(const Buffer &B);
+    void add_last_string(const std::string &B);
     void add_nl();
     void add_non_empty_to(Xml *res);
     void change_name(const std::string &s) { name = the_names[s]; }

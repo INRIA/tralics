@@ -25,7 +25,7 @@ namespace {
             Xml *sf = from->get_first_env("subfigure");
             if (sf == nullptr) break;
             nrows++;
-            if (sf->is_xmlc()) {
+            if (!sf->is_element()) {
                 junk->push_back_unless_nullptr(sf);
                 continue;
             }
@@ -62,12 +62,11 @@ namespace {
         for (;;) {
             Xml *sf = from->get_first_env("cst_p");
             if (sf == nullptr) break;
-            if (sf->is_xmlc())
-                junk->push_back_unless_nullptr(sf);
-            else {
+            if (sf->is_element()) {
                 Xml *res1 = figline(sf, ctr, junk);
                 if (res1 != nullptr) to->push_back_unless_nullptr(res1);
-            }
+            } else
+                junk->push_back_unless_nullptr(sf);
         }
     }
 
@@ -78,7 +77,7 @@ namespace {
         for (;;) {
             Xml *P = from->get_first_env("cst_p");
             if (P == nullptr) break;
-            if (P->is_xmlc()) {
+            if (!P->is_element()) {
                 junk->push_back_unless_nullptr(P);
                 continue;
             }
@@ -90,7 +89,7 @@ namespace {
                     P->add_non_empty_to(junk);
                     break;
                 }
-                if (sf->is_xmlc()) {
+                if (!sf->is_element()) {
                     junk->push_back_unless_nullptr(sf);
                     continue;
                 }
@@ -215,7 +214,7 @@ namespace {
         from->remove_par_bal_if_ok();
         to->id.add_attribute(the_names["rend"], the_names["display"]);
         Xml *C = from->single_non_empty();
-        if ((C != nullptr) && !C->is_xmlc()) {
+        if (C != nullptr && C->is_element()) {
             if (C->has_name_of("figure")) {
                 to->push_back_unless_nullptr(C);
                 from->clear();
@@ -253,7 +252,7 @@ auto Xml::try_cline(bool action) -> bool {
             a    = (cline_last - cline_first) + 1;
             a_ok = true;
         }
-        if (k->is_xmlc()) {
+        if (!k->is_element()) {
             std::string N = k->name;
             if (std::string(N) == "\n") continue; // allow newline separator
             return false;
@@ -272,7 +271,7 @@ auto Xml::try_cline(bool action) -> bool {
 auto Xml::total_span(long &res) const -> bool {
     long r = 0;
     for (const auto &k : *this) {
-        if (k->is_xmlc()) {
+        if (!k->is_element()) {
             std::string N = k->name;
             if (std::string(N) == "\n") continue; // allow newline separator
             return false;
@@ -297,7 +296,7 @@ auto Xml::try_cline_again(bool action) -> bool {
             --k;
             continue;
         }
-        if (at(k)->is_xmlc() && k == len - 1) {
+        if (!at(k)->is_element() && k == len - 1) {
             std::string N = at(k)->name;
             if (std::string(N) == "\n") continue;
             return false;
@@ -315,11 +314,11 @@ void Xml::bordermatrix() {
     if (size() <= 1) return;
     auto n = size() - 1;
     auto F = front();
-    if ((F != nullptr) && !F->is_xmlc() && F->size() > 1) { F->insert_at(1, new Xml(the_names["mtd"], nullptr)); }
+    if (F != nullptr && F->is_element() && F->size() > 1) { F->insert_at(1, new Xml(the_names["mtd"], nullptr)); }
     auto att    = std::string("rowspan");
     auto attval = std::string(std::to_string(n));
     F           = at(1);
-    if ((F != nullptr) && !F->is_xmlc() && F->size() > 1) {
+    if (F != nullptr && F->is_element() && F->size() > 1) {
         Xml *aux = new Xml(the_names["mtd"], MathDataP::mk_mo("("));
         aux->add_att(att, attval);
         F->insert_at(1, aux);
@@ -341,32 +340,32 @@ auto Xml::spec_copy() const -> Xml * {
     return res;
 }
 
-auto Xml::real_size() const -> long { return is_xmlc() ? -2 : to_signed(size()); }
+auto Xml::real_size() const -> long { return is_element() ? to_signed(size()) : -2; }
 
 auto Xml::value_at(long n) -> Xml * {
-    if (is_xmlc() || n < 0 || n >= to_signed(size())) return nullptr;
+    if (!is_element() || n < 0 || n >= to_signed(size())) return nullptr;
     return at(to_unsigned(n));
 }
 
 auto Xml::put_at(long n, gsl::not_null<Xml *> x) -> bool {
-    if (is_xmlc() || n < 0 || n >= to_signed(size())) return false;
+    if (!is_element() || n < 0 || n >= to_signed(size())) return false;
     at(to_unsigned(n)) = x;
     return true;
 }
 
 auto Xml::remove_at(long n) -> bool {
-    if (is_xmlc() || n < 0 || n >= to_signed(size())) return false;
+    if (!is_element() || n < 0 || n >= to_signed(size())) return false;
     erase(begin() + n);
     return true;
 }
 
 auto Xml::is_child(Xml *x) const -> bool {
-    if (is_xmlc()) return false;
+    if (!is_element()) return false;
     return std::find(begin(), end(), x) != end();
 }
 
 auto Xml::deep_copy() -> gsl::not_null<Xml *> {
-    if (is_xmlc()) return gsl::not_null{this};
+    if (!is_element()) return gsl::not_null{this};
     gsl::not_null res{new Xml(name, nullptr)};
     res->id.add_attribute(id);
     for (size_t i = 0; i < size(); i++) { res->push_back_unless_nullptr((*this)[i]->deep_copy()); }
@@ -378,7 +377,7 @@ auto Xml::deep_copy() -> gsl::not_null<Xml *> {
 void Xml::recurse0(XmlAction &X) {
     for (size_t k = 0; k < size(); k++) {
         Xml *y = at(k);
-        if (y->is_xmlc()) continue;
+        if (!y->is_element()) continue;
         if (y->has_name(X.match)) switch (X.what) {
             case rc_contains: X.mark_found(); return;
             case rc_delete_first:
@@ -405,7 +404,7 @@ void Xml::recurse0(XmlAction &X) {
 void Xml::recurse(XmlAction &X) {
     for (size_t k = 0; k < size(); k++) {
         Xml *T = at(k);
-        if (T->is_xmlc()) continue;
+        if (!T->is_element()) continue;
         if (T->has_name(X.match)) {
             switch (X.what) {
             case rc_delete:
@@ -435,7 +434,7 @@ void Xml::recurse(XmlAction &X) {
                 for (size_t j = 0; j < T->size(); j++) {
                     Xml *W = T->at(j);
                     if (W == nullptr) continue;
-                    if (!W->is_xmlc() && W->has_name_of("head")) {
+                    if (W->is_element() && W->has_name_of("head")) {
                         std::replace(the_parser.all_heads.begin(), the_parser.all_heads.end(), W, (Xml *)nullptr);
                         continue;
                     }
@@ -461,7 +460,7 @@ auto Xml::last_addr() const -> Xml * { return !empty() ? back().get() : nullptr;
 auto Xml::last_box() -> Xml * {
     if (empty()) return nullptr;
     auto res = back();
-    if (!res->is_xmlc()) {
+    if (res->is_element()) {
         pop_back();
         return res;
     }
@@ -472,7 +471,7 @@ auto Xml::last_box() -> Xml * {
 void Xml::remove_last_empty_hi() {
     if (empty()) return;
     auto T = back();
-    if (T->is_xmlc()) return;
+    if (!T->is_element()) return;
     if (!T->only_recur_hi()) return;
     pop_back();
 }
@@ -483,7 +482,7 @@ auto Xml::only_recur_hi() const -> bool {
     if (empty()) return true;
     Xml *x = single_son();
     if (x == nullptr) return false;
-    if (x->is_xmlc()) return false;
+    if (!x->is_element()) return false;
     return x->only_recur_hi();
 }
 
@@ -492,7 +491,7 @@ auto Xml::only_recur_hi() const -> bool {
 auto Xml::only_hi() const -> bool {
     Xml *x = single_non_empty();
     if (x == nullptr) return false;
-    if (x->is_xmlc()) return false;
+    if (!x->is_element()) return false;
     return x->id.is_font_change();
 }
 
@@ -504,7 +503,7 @@ void Xml::push_back_list(Xml *x) {
 
 // Insert X at the end; but the value if it is a temporary.
 void Xml::add_tmp(gsl::not_null<Xml *> x) {
-    if (!x->is_xmlc() && x->has_name_of("temporary"))
+    if (x->is_element() && x->has_name_of("temporary"))
         push_back_list(x);
     else
         push_back(x);
@@ -519,13 +518,13 @@ void Xml::add_first(Xml *x) { insert(begin(), gsl::not_null{x}); }
 // This find an element with a single son, the son should be res.
 auto Xml::find_on_tree(Xml *check, Xml *&res) const -> bool {
     for (auto T : *this) {
-        if (!T->is_xmlc() && T->size() == 1 && T->at(0) == check) {
+        if (T->is_element() && T->size() == 1 && T->at(0) == check) {
             res = T;
             return true;
         }
     }
     for (auto T : *this) {
-        if (!T->is_xmlc() && T->find_on_tree(check, res)) return true;
+        if (T->is_element() && T->find_on_tree(check, res)) return true;
     }
     return false;
 }
@@ -537,7 +536,7 @@ void Xml::insert_bib(Xml *bib, Xml *match) {
 }
 
 void Xml::print_on(std::ostream &o) const {
-    if (is_xmlc()) {
+    if (!is_element()) {
         if (id.value == 0)
             o << encode(name);
         else if (id.value == size_t(-1))
@@ -593,14 +592,14 @@ auto Xml::all_empty() const -> bool { return empty() && name.empty(); }
 
 // Returns true if empty (white space only)
 auto Xml::is_whitespace() const -> bool {
-    return std::all_of(begin(), end(), [](Xml *T) { return T->is_xmlc() && only_space(T->name); });
+    return std::all_of(begin(), end(), [](Xml *T) { return !T->is_element() && only_space(T->name); });
 }
 
 // If there is one non-empty son returns it.
 auto Xml::single_non_empty() const -> Xml * {
     Xml *res{nullptr};
     for (auto y : *this) {
-        if (!y->is_xmlc()) {
+        if (y->is_element()) {
             if (res == nullptr)
                 res = y;
             else
@@ -609,10 +608,6 @@ auto Xml::single_non_empty() const -> Xml * {
             return nullptr;
     }
     return res;
-}
-
-auto Xml::all_xmlc() const -> bool {
-    return std::all_of(begin(), end(), [](Xml *t) { return t->is_xmlc(); });
 }
 
 auto Xml::single_son() const -> Xml * { return size() == 1 ? at(0).get() : nullptr; }
@@ -635,19 +630,20 @@ void Xml::move(std::string match, Xml *res) {
 // This is used to implement \unhbox
 void Xml::unbox(Xml *x) {
     if (x == nullptr) return;
-    if (x->is_xmlc()) {
-        Buffer &b = scbuf;
+    if (x->is_element()) {
+        push_back_list(x);
+    } else {
+        Buffer &b = scbuf; // \todo without scbuf
         b.clear();
         b.append(encode(x->name));
-        add_last_string(b);
-    } else
-        push_back_list(x);
+        add_last_string(encode(x->name));
+    }
 }
 
 // Replaces <foo><p>a b c</p></foo> by <foo> a b c </foo>
 void Xml::remove_par_bal_if_ok() {
     Xml *res = single_non_empty();
-    if ((res != nullptr) && !res->is_xmlc() && res->has_name_of("cst_p")) {
+    if ((res != nullptr) && res->is_element() && res->has_name_of("cst_p")) {
         std::vector<gsl::not_null<Xml *>>::operator=(*res);
         res->clear();
     }
@@ -698,7 +694,7 @@ void Xml::postprocess_fig_table(bool is_fig) {
 void Xml::add_non_empty_to(Xml *res) {
     for (size_t k = 0; k < size(); k++) {
         Xml *T = at(k);
-        if (T->is_xmlc() && only_space(T->name)) continue;
+        if (!T->is_element() && only_space(T->name)) continue;
         res->push_back_unless_nullptr(T);
     }
 }
@@ -714,7 +710,7 @@ auto Xml::convert_to_string() -> std::string {
 
 // This converts the content to a string. May be recursive
 void Xml::convert_to_string(Buffer &b) {
-    if (is_xmlc()) {
+    if (!is_element()) {
         b += name;
         return;
     }
@@ -740,7 +736,7 @@ void Xml::convert_to_string(Buffer &b) {
 // Used to print the title of a section.
 void Xml::put_in_buffer(Buffer &b) {
     for (size_t k = 0; k < size(); k++) {
-        if (at(k)->is_xmlc())
+        if (!at(k)->is_element())
             b += encode(at(k)->name);
         else if (at(k)->has_name_of("hi"))
             at(k)->put_in_buffer(b);
@@ -761,8 +757,8 @@ auto Xml::remove_last() -> Xml * {
 auto Xml::par_is_empty() -> bool {
     if (empty()) return true;
     if (size() > 1) return false;
-    if (at(0)->is_xmlc()) return false;
-    if (at(0)->is_xmlc() || !at(0)->id.is_font_change()) return false;
+    if (!at(0)->is_element()) return false;
+    if (!at(0)->id.is_font_change()) return false;
     return at(0)->par_is_empty();
 }
 
@@ -782,7 +778,7 @@ void Xml::last_to_SH() const {
 }
 
 // This adds B at the end the element, via concatenation, if possible.
-void Xml::add_last_string(const Buffer &B) {
+void Xml::add_last_string(const std::string &B) {
     if (B.empty()) return;
     shbuf.clear();
     if (last_is_string()) {
@@ -822,7 +818,7 @@ void Xml::add_nl() {
 // This returns the span of the current cell; -1 in case of trouble
 // the default value is 1
 auto Xml::get_cell_span() const -> long { // \todo std::optional<size_t>
-    if (is_xmlc()) return 0;
+    if (!is_element()) return 0;
     if (!has_name(the_names["cell"])) return -1; // not a cell
     auto a = fetch_att(id, the_names["cols"]);
     if (!a) return 1;              // no property, default is 1

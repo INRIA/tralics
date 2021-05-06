@@ -86,6 +86,7 @@ run_tralics hello
 run_tralics hello1
 run_tralics hello2.tex -config=hello.tcf -oe8
 run_tralics hello3
+run_tralics comment
 run_tralics testb -shell-escape
 run_tralics_with_err txtc "There was one error." -nozerowidthelt
 run_tralics txtd

@@ -182,7 +182,7 @@ void Cv3Helper::add_kernel(math_style cms) {
     }
     Xml *tmp = new Xml(the_names[bl], nullptr);
     // case a_b_c. If we do nothing, the mathml interpreter will barf
-    if ((p != nullptr) && !p->is_xmlc() && (p->has_name_of("msup") || p->has_name_of("msub") || p->has_name_of("msubsup")))
+    if ((p != nullptr) && p->is_element() && (p->has_name_of("msup") || p->has_name_of("msub") || p->has_name_of("msubsup")))
         p = new Xml(the_names["mrow"], p);
     if (ptype == mt_flag_small_l || ptype == mt_flag_small_r || ptype == mt_flag_small_m) {
         res.push_back(p, ploc, ptype);

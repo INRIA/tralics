@@ -55,7 +55,7 @@ namespace {
                     return;
                 }
             }
-            if (!R->is_xmlc() && R->has_name(the_names["row"])) {
+            if (R->is_element() && R->has_name(the_names["row"])) {
                 if (R->try_cline_again(false)) {
                     R->try_cline_again(true);
                     R->name = std::string();

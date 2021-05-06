@@ -269,7 +269,7 @@ auto Math::add_fence(bool final, MathF &M) -> bool {
         if (after_dummy) {
             after_dummy = false;
             Xml *xval   = front().remove_prefix();
-            if ((xval != nullptr) && !xval->is_xmlc() &&
+            if ((xval != nullptr) && xval->is_element() &&
                 (xval->has_name_of("msup") || xval->has_name_of("msub") || xval->has_name_of("msubsup"))) {
                 M.pop_last(xval);
             }

@@ -186,7 +186,7 @@ auto Stack::first_frame() const -> std::string {
 auto Stack::get_cur_par() const -> Xml * {
     const StackSlot &X     = first_non_empty();
     std::string      pname = the_names["cst_p"];
-    if (X.frame == pname && !X.obj->is_xmlc() && X.obj->has_name(pname)) return X.obj;
+    if (X.frame == pname && X.obj->is_element() && X.obj->has_name(pname)) return X.obj;
     return nullptr;
 }
 

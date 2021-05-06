@@ -1180,7 +1180,7 @@ void Parser::T_mbox(subtypes c) {
     // Hack the box
     Xml *u = mbox->single_non_empty();
     if ((u != nullptr) && u->has_name_of("figure")) mbox->kill_name();
-    if (mbox->all_xmlc()) mbox->kill_name();
+    if (std::none_of(mbox->begin(), mbox->end(), [](Xml *t) { return t->is_element(); })) mbox->kill_name();
     if (mbox->only_hi()) mbox->kill_name();
 }
 
